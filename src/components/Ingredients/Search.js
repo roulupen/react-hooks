@@ -8,6 +8,8 @@ const Search = React.memo(props => {
   const { onLoadIngredients } = props;
   const inputRef = useRef();
 
+  console.log('RENDERING : IngredientSearch');
+
   useEffect(() => {
 
     // This SetTime out executes after every 500 secs and inside the setTimeout

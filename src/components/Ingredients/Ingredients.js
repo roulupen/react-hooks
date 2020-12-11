@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useCallback } from 'react';
+import React, { useReducer, useCallback, useMemo } from 'react';
 
 import IngredientForm from './IngredientForm';
 import IngredientList from './IngredientList';
@@ -61,12 +61,9 @@ function Ingredients() {
   // }, []);
 
   
-  useEffect(
-    () => console.log('Ingredients Component rendered.'),
-    [userIngredients]
-  );
+  console.log('RENDERING : Ingredients');
 
-  const addIngredienthandler = (ingredient) => {
+  const addIngredienthandler = useCallback((ingredient) => {
     httpDispath({type: 'SEND'});
     // setIsLoading(true);
 
@@ -91,10 +88,10 @@ function Ingredients() {
       // setErr('Something went wrong!');
       // setIsLoading(false);
     });
-  };
+  }, []);
 
-  const removeIngredienthandler = (ingredientId) => {
-    httpDispath({type: 'SEND'});
+  const removeIngredienthandler = useCallback((ingredientId) => {
+    // httpDispath({type: 'SEND'});
     // setIsLoading(true);
     fetch(`https://react-hook-90f4c-default-rtdb.firebaseio.com/ingredients/${ingredientId}.json`, {
       method: 'DELETE'
@@ -110,17 +107,23 @@ function Ingredients() {
       // setErr('Something went wrong!');
       // setIsLoading(false);
     });
-  };
+  }, []);
 
   const ingredientFilterHandler = useCallback((ingredients) => {
     dispatch({ type: 'SET', ingredients: ingredients });
     // setUserIngredients(ingredients);
   }, []);
 
-  const clearError = () => {
+  const clearError = useCallback(() => {
     httpDispath({type: 'RESET'});
     // setErr(null);
-  };
+  }, []);
+
+  const ingredeintList = useMemo(() => {
+    return <IngredientList
+              ingredients={userIngredients}
+              onRemoveItem={removeIngredienthandler} />;
+  }, [userIngredients, removeIngredienthandler]);
 
   return (
     <div className="App">
@@ -128,7 +131,7 @@ function Ingredients() {
       <IngredientForm onAddIngredient={addIngredienthandler} loading={httpState.isLoading} />
       <section>
         <Search onLoadIngredients={ingredientFilterHandler} />
-        <IngredientList ingredients={userIngredients} onRemoveItem={removeIngredienthandler} />
+        {ingredeintList}
       </section>
     </div>
   );
