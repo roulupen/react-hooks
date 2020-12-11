@@ -14,7 +14,7 @@ const Search = React.memo(props => {
     // we are comparing current value by reference with the value enter 500 ms 
     // if it's equal then we are sending the API request
     // By this we are making sure after typing when user takes a pause then we are sending the request
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       if(enteredFilter === inputRef.current.value) {
         const query = enteredFilter.length === 0 ? '' : `?orderBy="title"&equalTo="${enteredFilter}"`;
         fetch('https://react-hook-90f4c-default-rtdb.firebaseio.com/ingredients.json' + query)
@@ -33,6 +33,14 @@ const Search = React.memo(props => {
           })
       }
     }, 500);
+
+    // useEffect cleanup function
+    // This cleanup function executes when 2nd or subsequent time useEffect runs
+    // For first time it exeuctes the acutal logic and 2nd time first it executes cleanup before executing the
+    // actual logic
+    return () => {
+      clearTimeout(timer);
+    };
   }, [enteredFilter, onLoadIngredients, inputRef]);
 
   return (
